@@ -33,7 +33,7 @@ public class RepoEstudio:RepoBase, IRepoEstudio
             var estudio = multi.ReadSingleOrDefault<Estudio>();
             if (estudio is not null)
             {
-                estudio.Producciones = multi.Read<Producciones>().ToList();
+                estudio.Producciones = multi.Read<Produccion>().ToList();
             }
 
             return estudio;
