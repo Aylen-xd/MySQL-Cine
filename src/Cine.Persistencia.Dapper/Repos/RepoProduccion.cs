@@ -1,5 +1,8 @@
 
 
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
+
 namespace Cine.Persistencia.Dapper.Repos;
 
 public class RepoProduccion : RepoBase, IRepoProduccion
@@ -37,7 +40,7 @@ public class RepoProduccion : RepoBase, IRepoProduccion
         elemento.IdProduccion = parametros.Get<byte>("xidProduccion");
     }
 
-    //-------------------------------------------Metodo async----------------------------------------------
+    //-------------------------------------------Metodo async Alta----------------------------------------------
     public async Task AltaAsync(Produccion elemento)
     {
         DynamicParameters parametros = ParametrosAlta(elemento);
@@ -46,22 +49,39 @@ public class RepoProduccion : RepoBase, IRepoProduccion
 
         elemento.IdProduccion = parametros.Get<byte>("xidProduccion");
     }
+    //------------------------------------------------------------------------------------
 
-
+    public static string queryTraerElementos = "SELECT * FROM Produccion";
     public IEnumerable<Produccion> TraerElementos()
     {
-        var query = @"SELECT * FROM Produccion";
-        var producciones = Conexion.Query<Produccion>(query);
+        var producciones = Conexion.Query<Produccion>(queryTraerElementos);
         return producciones;
     }
 
-    public IEnumerable<Produccion> DirectorActualiza(Produccion produccion, byte unidProduccion)
+    //-------------------------------------------Metodo async TraerElementos---------------------------------------------
+
+    public async Task<IEnumerable<Produccion>> TraerElementosAsync()
     {
-        var Query = @"UPDATE Produccion
+        var producciones = await Conexion.QueryAsync<Produccion>(queryTraerElementos);
+        return producciones;
+    }
+
+    //------------------------------------------------------------------------------------
+
+    public static string queryDirectorActualiza = @"UPDATE Produccion
                     set Director_General = unDirector, Productor = unProductor, Guion = unGuion, Musica = unaMusica, Presupuesto = unPresuppuesto, Sonido = unSonido, Vestuario = unVestuario
                     WHERE idProduccion = @idProduccion";
-           
-        var actualizaciones = Conexion.Query<Produccion>(Query, new {idProduccion = produccion});
+    public IEnumerable<Produccion> DirectorActualiza(Produccion produccion, byte unidProduccion)
+    {
+        var actualizaciones = Conexion.Query<Produccion>(queryDirectorActualiza, new { idProduccion = produccion });
         return actualizaciones;
     }
+
+    //-------------------------------------------Metodo async DirectorActualiza---------------------------------------------
+    public async Task<IEnumerable<Produccion>> DirectorActualizaAsync(Produccion produccion, byte unidProduccion)
+    {
+        var actualizaciones = await Conexion.QueryAsync<Produccion>(queryDirectorActualiza, new { idProduccion = produccion });
+        return actualizaciones;
+    }
+    //------------------------------------------------------------------------------------
 }

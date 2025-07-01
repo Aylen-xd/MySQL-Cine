@@ -1,7 +1,7 @@
 
 namespace Cine.Persistencia.Dapper.Repos;
 
-public class RepoEstudio:RepoBase, IRepoEstudio
+public class RepoEstudio : RepoBase, IRepoEstudio
 {
     private string queryEstudio;
 
@@ -38,8 +38,9 @@ public class RepoEstudio:RepoBase, IRepoEstudio
         await Conexion.ExecuteAsync("insEstudio", parametros);
 
         elemento.IdEstudio = parametros.Get<byte>("idEstudio");
-        
     }
+    //------------------------------------------------------------------------------------
+
 
     //se declara como variable para ser usada despues por los metodos que la necesitan 
     private static string queryTraerElementos = @"SELECT * FROM Estudio";
@@ -56,6 +57,7 @@ public class RepoEstudio:RepoBase, IRepoEstudio
         var estudios = await Conexion.QueryAsync<Estudio>(queryTraerElementos);
         return estudios;
     }
+    //------------------------------------------------------------------------------------
 
 
     private static string queryExisteEstudio = @"SELECT IdEstudio, Nombre, Fundacion 
@@ -67,30 +69,35 @@ public class RepoEstudio:RepoBase, IRepoEstudio
     {
         Conexion.Execute(queryExisteEstudio, new { indiceSimple = elindiceSimple });
         var BusquedaEstudio = Conexion.Query<Estudio>(queryExisteEstudio);
-        return BusquedaEstudio;
+        return (Estudio?)BusquedaEstudio;
     }
 
-    public async Task DetalleAsync(byte indiceSimple)
+    //------------------------ Metodo Async Detalle -----------------------------
+    public async Task<Estudio> DetalleAsync(byte elindiceSimple) //Devuelve un tipo task, si o si devuelve algo
     {
-        //falta completar
+        Conexion.ExecuteAsync(queryExisteEstudio, new { indiceSimple = elindiceSimple });
+        var BusquedaEstudio = await Conexion.QueryAsync<Estudio>(queryExisteEstudio);
+        return (Estudio)BusquedaEstudio;
     }
+    //------------------------------------------------------------------------------------
 
+
+    private static string PeliGeneroEstudio = @"select Pelicula.nombre, restrincion, descripcion,   
+                                                Pelicula.duracion, Director_General 
+                                                from Produccion
+                                                join Pelicula using (idProduccion)
+                                                join Trailer using (idPelicula)
+                                                join Genero using (idGenero)
+                                                join Estudio using (idEstudio)
+                                                where genero = @genero and Estudio.nombre = @nombre";
 
     /*mtd query de peliculas segun estudio y genero*/
     public List<Pelicula> mtdPeliculaEstudio(string elgenero, string elestudio)
     {
-        var query = @"select Pelicula.nombre, restrincion, descripcion, Pelicula.duracion, Director_General 
-                        from Produccion
-                        join Pelicula using (idProduccion)
-                        join Trailer using (idPelicula)
-                        join Genero using (idGenero)
-                        join Estudio using (idEstudio)
-                        where genero = @genero and Estudio.nombre = @nombre";
-
         try
         {
-            Conexion.Execute(query, new { genero = elgenero, nombre = elestudio });
-            var peliEstudioGenero = Conexion.Query<Pelicula>(query);
+            Conexion.Execute(PeliGeneroEstudio, new { genero = elgenero, nombre = elestudio });
+            var peliEstudioGenero = Conexion.Query<Pelicula>(PeliGeneroEstudio);
             return (List<Pelicula>)peliEstudioGenero;
         }
         catch (System.Exception)
@@ -99,21 +106,54 @@ public class RepoEstudio:RepoBase, IRepoEstudio
         }
     }
 
-    public void Borrar(byte idEstudio)
+    //------------------------ Metodo Async Lista -----------------------------
+    public async Task<List<Pelicula>> mtdPeliculasEstudioAsync(string elgenero, string elestudio)
     {
-        var query = "DELETE FROM Estudio WHERE IdEstudio = @IdEstudio";
+        try
+        {
+            Conexion.ExecuteAsync(PeliGeneroEstudio, new { genero = elgenero, nombre = elestudio });
+            var peliEstudioGenero = await Conexion.QueryAsync<Pelicula>(PeliGeneroEstudio);
+            return (List<Pelicula>)peliEstudioGenero;
+        }
+        catch (System.Exception)
+        {
+            throw;
+        }
+    }
+    //------------------------------------------------------------------------------------
+
+    private static string BorrarQuery = "DELETE FROM Estudio WHERE IdEstudio = @IdEstudio";
+
+    public void Borrar(byte elidEstudio)
+    {
         /*try ejecuta la query*/
         try
         {
-            Conexion.Execute(query, new { IdEstudio = idEstudio });
+            Conexion.Execute(BorrarQuery, new { IdEstudio = elidEstudio });
         }
         /*Se consulta si la excepcion contiene el mensaje del trigger y se lo alamacena en la ConstraintException ese mensaje.*/
         catch (Exception e)
         {
-            if(e.Message.Contains("No se puede eliminar el estudio"))
+            if (e.Message.Contains("No se puede eliminar el estudio"))
                 throw new ConstraintException(e.Message, e);
         }
     }
+
+    //------------------------ Metodo Async Borrar -----------------------------
+    public async Task BorrarAsync(byte elidEstudio)
+    {
+        try
+        {
+            await Conexion.ExecuteAsync(BorrarQuery, new { IdEstudio = elidEstudio });
+        }
+        /*Se consulta si la excepcion contiene el mensaje del trigger y se lo alamacena en la ConstraintException ese mensaje.*/
+        catch (Exception e)
+        {
+            if (e.Message.Contains("No se puede eliminar el estudio"))
+                throw new ConstraintException(e.Message, e);
+        }
+    }
+    //------------------------------------------------------------------------------------
 
 }
 

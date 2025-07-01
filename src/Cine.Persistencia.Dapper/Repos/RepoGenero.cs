@@ -1,4 +1,5 @@
 namespace Cine.Persistencia.Dapper.Repos;
+
 public class RepoGenero : RepoBase, IRepoGenero
 {
     public RepoGenero(IDbConnection conexion)
@@ -36,13 +37,24 @@ public class RepoGenero : RepoBase, IRepoGenero
 
         elemento.IdGenero = parametros.Get<byte>("xidGenero");
     }
+    //------------------------------------------------------------------------------------
 
 
+    private static string queryTraerElementos = "SELECT * FROM Genero";
 
     public IEnumerable<Genero> TraerElementos()
     {
-        var query = @"SELECT * FROM Genero";
-        var generos = Conexion.Query<Genero>(query);
+        var generos = Conexion.Query<Genero>(queryTraerElementos);
         return generos;
     }
+
+    //------------------------ Metodo Async TraerElementos -----------------------------
+
+    public async Task<IEnumerable<Genero>> TraerElementosAsync()
+    {
+        var genero = await Conexion.QueryAsync<Genero>(queryTraerElementos);
+        return genero;
+    }
+    //------------------------------------------------------------------------------------
+
 }

@@ -47,6 +47,14 @@ public class RepoPelicula : RepoBase, IRepoPelicula
 
         elemento.IdPelicula = parametros.Get<byte>("xidPelicula");
     }
+    //------------------------------------------------------------------------------------
+
+    private static readonly string queryProduccion
+ = @"Select Pelicula.idPelicula, Pelicula.idProduccion, Pelicula.nombre, Pelicula.estreno, Pelicula.descripcion, Pelicula.calificacion, Pelicula.duracion, Pelicula.restrincion, Pelicula.recaudado
+        From Pelicula
+        join Produccion using (idProduccion)
+        ";
+
 
     public IEnumerable<Pelicula> TraerElementos()
     {
@@ -54,11 +62,16 @@ public class RepoPelicula : RepoBase, IRepoPelicula
         return pelicula;
     }
 
-    private static readonly string queryProduccion
-     = @"Select Pelicula.idPelicula, Pelicula.idProduccion, Pelicula.nombre, Pelicula.estreno, Pelicula.descripcion, Pelicula.calificacion, Pelicula.duracion, Pelicula.restrincion, Pelicula.recaudado
-        From Pelicula
-        join Produccion using (idProduccion)
-        ";
+    //------------------------ Metodo Async TraerElementos -----------------------------
+    private static string queryTraerElementos = "SELECT * FROM Pelicula";
+
+    public async Task<IEnumerable<Pelicula>> TraerElementosAsync()
+    {
+        var pelicula = await Conexion.QueryAsync<Pelicula>(queryTraerElementos);
+        return pelicula;
+    }
+
+    //------------------------------------------------------------------------------------
 
     public List<Pelicula> TraerPeliProdu()
     {
@@ -74,6 +87,21 @@ public class RepoPelicula : RepoBase, IRepoPelicula
         return pelicula;
     }
 
+    //------------------------ Metodo Async TraerPeliProdu -----------------------------
+    public async Task<List<Pelicula>> TraerPeliProduAsync()
+    {
+        var pelicula = await Conexion.QueryAsync<Pelicula, Produccion, Pelicula>
+           (queryProduccion,
+           (pelicula, produccion) =>
+           {
+               pelicula.Produccion = produccion;
+               return pelicula;
+           },
+           splitOn: "idProduccion");
+        return (List<Pelicula>)pelicula;
+    }
+
+    //------------------------------------------------------------------------------------
     private static readonly string queryActorPelicula
      = @"
         SELECT  Actor.idActor, Actor.Nombre, Actor.Apellido, Actor.fecha_nacimiento, Actor.Sexo, Actor.Nacionalidad, Actor.Rol
@@ -83,9 +111,18 @@ public class RepoPelicula : RepoBase, IRepoPelicula
         WHERE   idPelicula = @idPelicula;
         ";
 
-    public IEnumerable<Actor> ActoresPelicula(byte idPelicula)
+    public IEnumerable<Actor> ActoresPelicula(byte elidPelicula)
     {
-        var ActoresPelicula = Conexion.Query<Actor>(queryActorPelicula, new {idPelicula = idPelicula});
-        return ActoresPelicula;   
+        var ActoresPelicula = Conexion.Query<Actor>(queryActorPelicula, new { idPelicula = elidPelicula });
+        return ActoresPelicula;
     }
+
+    //------------------------ Metodo Async ActoresPeliculasAsync -----------------------------
+    public async Task<IEnumerable<Actor>> ActoresPeliculasAsync(byte elidPelicula)
+    {
+        var ActoresPelicula = await Conexion.QueryAsync<Actor>(queryActorPelicula, new { idPelicula = elidPelicula });
+        return ActoresPelicula;
+    }
+    //------------------------------------------------------------------------------------
+    
 }

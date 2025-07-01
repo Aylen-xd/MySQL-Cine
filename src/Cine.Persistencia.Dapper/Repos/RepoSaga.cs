@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace Cine.Persistencia.Dapper.Repos;
 
 public class RepoSaga : RepoBase, IRepoSaga
@@ -38,12 +40,22 @@ public class RepoSaga : RepoBase, IRepoSaga
 
         elemento.IdSaga = parametros.Get<byte>("xidSaga");
     }
+    //------------------------------------------------------------------------------------
 
 
+    public static string queryTraerElementos = @"SELECT * FROM Saga";
     public IEnumerable<Saga> TraerElementos()
     {
-        var query = @"SELECT * FROM Saga";
-        var saga = Conexion.Query<Saga>(query);
+        var saga = Conexion.Query<Saga>(queryTraerElementos);
         return saga;
     }
+
+    //-------------------------------------------Metodo async TraerElementos----------------------------------------------
+        public async Task<IEnumerable<Saga>> TraerElementosAsync()
+    {
+        var saga = await Conexion.QueryAsync<Saga>(queryTraerElementos);
+        return saga;
+    }
+    //------------------------------------------------------------------------------------
+
 }

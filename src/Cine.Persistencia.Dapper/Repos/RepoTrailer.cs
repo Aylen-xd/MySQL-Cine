@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Cine.Persistencia.Dapper.Repos;
 
 namespace Cine.Persistencia.Dapper;
@@ -41,11 +42,22 @@ public class RepoTrailer : RepoBase, IRepoTrailer
 
         elemento.IdTrailer = parametros.Get<byte>("xidTrailer");
     }
+    //------------------------------------------------------------------------------------
 
     public IEnumerable<Trailer> TraerElementos()
     {
-        var query = @"SELECT * FROM Trailer";
-        var Trailer = Conexion.Query<Trailer>(query);
+        var trailer = Conexion.Query<Trailer>(queryTraerElementos);
+        return trailer;
+    }
+
+    //-------------------------------------------Metodo async TrarElementos----------------------------------------------
+    public static string queryTraerElementos = @"SELECT * FROM Trailer";
+    public async Task<IEnumerable<Trailer>> TraerElementosAsync()
+    {
+        var Trailer = await Conexion.QueryAsync<Trailer>(queryTraerElementos);
         return Trailer;
     }
+    //------------------------------------------------------------------------------------
+
 }
+
