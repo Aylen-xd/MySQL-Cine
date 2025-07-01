@@ -9,3 +9,8 @@ public interface IRepoDetalle<TE, TI> where TI: IBinaryNumber<TI>
 {
     TE? Detalle(TI indiceSimple);
 }
+
+public interface IRepoDetalleAsync<TE, TI> where TI: IBinaryNumber<TI>
+{
+    Task DetalleAsync(TI indiceSimple);
+}

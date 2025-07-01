@@ -8,7 +8,7 @@ public class RepoTrailer : RepoBase, IRepoTrailer
     {
     }
 
-    public void Alta(Trailer trailer)
+    public static DynamicParameters ParametrosAlta(Trailer trailer)
     {
         var parametros = new DynamicParameters();
         parametros.Add("unidTrailer", direction: ParameterDirection.Output);
@@ -17,9 +17,29 @@ public class RepoTrailer : RepoBase, IRepoTrailer
         parametros.Add("unnombre", trailer.Nombre);
         parametros.Add("unaduracion", trailer.Duracion);
 
+        //Conexion.Execute("InsTrailer", parametros);
+
+        //trailer.IdTrailer = parametros.Get<byte>("unidTrailer");
+        return parametros;
+    }
+
+    public void Alta(Trailer elemento)
+    {
+        DynamicParameters parametros = ParametrosAlta(elemento);
+
         Conexion.Execute("InsTrailer", parametros);
 
-        trailer.IdTrailer = parametros.Get<byte>("unidTrailer");
+        elemento.IdTrailer = parametros.Get<byte>("xidTrailer");
+    }
+
+    //-------------------------------------------Metodo async----------------------------------------------
+    public async Task AltaAsync(Trailer elemento)
+    {
+        DynamicParameters parametros = ParametrosAlta(elemento);
+
+        await Conexion.ExecuteAsync("InsTrailer", parametros);
+
+        elemento.IdTrailer = parametros.Get<byte>("xidTrailer");
     }
 
     public IEnumerable<Trailer> TraerElementos()

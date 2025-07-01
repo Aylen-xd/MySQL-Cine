@@ -9,7 +9,7 @@ public class RepoPelicula : RepoBase, IRepoPelicula
 
     }
 
-    public void Alta(Pelicula pelicula)
+    public static DynamicParameters ParametrosAlta(Pelicula pelicula)
     {
         var parametros = new DynamicParameters();
         parametros.Add("unidPelicula", direction: ParameterDirection.Output);
@@ -22,9 +22,30 @@ public class RepoPelicula : RepoBase, IRepoPelicula
         parametros.Add("unarestrincion", pelicula.Restriccion);
         parametros.Add("unrecaudado", pelicula.Recaudado);
 
+        //Conexion.Execute("InsPelicula", parametros);
+
+        //pelicula.IdPelicula = parametros.Get<byte>("unidPelicula");
+
+        return parametros;
+    }
+
+    public void Alta(Pelicula elemento)
+    {
+        DynamicParameters parametros = ParametrosAlta(elemento);
+
         Conexion.Execute("InsPelicula", parametros);
 
-        pelicula.IdPelicula = parametros.Get<byte>("unidPelicula");
+        elemento.IdPelicula = parametros.Get<byte>("xidPelicula");
+    }
+
+    //-------------------------------------------Metodo async----------------------------------------------
+    public async Task AltaAsync(Pelicula elemento)
+    {
+        DynamicParameters parametros = ParametrosAlta(elemento);
+
+        await Conexion.ExecuteAsync("InsPelicula", parametros);
+
+        elemento.IdPelicula = parametros.Get<byte>("xidPelicula");
     }
 
     public IEnumerable<Pelicula> TraerElementos()

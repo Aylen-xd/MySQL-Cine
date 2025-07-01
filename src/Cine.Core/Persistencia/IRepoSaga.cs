@@ -1,6 +1,6 @@
 namespace Cine.Core.Persistencia;
 
-public interface IRepoSaga : IRepoAlta<Saga>, IListado<Saga>
+public interface IRepoSaga : IRepoAlta<Saga>, IListado<Saga>, IRepoAltaAsync<Saga>
 {
     
 }

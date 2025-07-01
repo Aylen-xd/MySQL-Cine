@@ -8,7 +8,7 @@ public class RepoProduccion : RepoBase, IRepoProduccion
     {
     }
 
-    public void Alta(Produccion produccion)
+    public static DynamicParameters ParametrosAlta(Produccion produccion)
     {
         var parametros = new DynamicParameters();
         parametros.Add("unidProduccion", direction: ParameterDirection.Output);
@@ -21,10 +21,32 @@ public class RepoProduccion : RepoBase, IRepoProduccion
         parametros.Add("unPresupuesto", produccion.Presupuesto);
         parametros.Add("unaMusica", produccion.Musica);
 
+        //Conexion.Execute("InsProduccion", parametros);
+
+        //produccion.IdProduccion = parametros.Get<byte>("unidProduccion");
+
+        return parametros;
+    }
+
+    public void Alta(Produccion elemento)
+    {
+        DynamicParameters parametros = ParametrosAlta(elemento);
+
         Conexion.Execute("InsProduccion", parametros);
 
-        produccion.IdProduccion = parametros.Get<byte>("unidProduccion");
+        elemento.IdProduccion = parametros.Get<byte>("xidProduccion");
     }
+
+    //-------------------------------------------Metodo async----------------------------------------------
+    public async Task AltaAsync(Produccion elemento)
+    {
+        DynamicParameters parametros = ParametrosAlta(elemento);
+
+        await Conexion.ExecuteAsync("InsProduccion", parametros);
+
+        elemento.IdProduccion = parametros.Get<byte>("xidProduccion");
+    }
+
 
     public IEnumerable<Produccion> TraerElementos()
     {
