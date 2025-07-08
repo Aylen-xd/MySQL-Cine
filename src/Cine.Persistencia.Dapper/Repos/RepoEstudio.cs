@@ -153,6 +153,11 @@ public class RepoEstudio : RepoBase, IRepoEstudio
                 throw new ConstraintException(e.Message, e);
         }
     }
+
+    Task<IEnumerable<Estudio>> IListadoAsync<Estudio>.TraerElementoAsync()
+    {
+        throw new NotImplementedException();
+    }
     //------------------------------------------------------------------------------------
 
 }

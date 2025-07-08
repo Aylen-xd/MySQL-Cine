@@ -1,8 +1,4 @@
-
-using System.Reflection.Metadata.Ecma335;
-
 namespace Cine.Persistencia.Dapper.Repos;
-
 public class RepoActor : RepoBase, IRepoActor
 {
     public RepoActor(IDbConnection conexion) : base(conexion) { }

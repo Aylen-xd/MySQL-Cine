@@ -1,3 +1,4 @@
+-- Active: 1751981225343@@127.0.0.1@3306@5to_pelicula
 /*Triggers*/
 
 Use 5to_Pelicula;

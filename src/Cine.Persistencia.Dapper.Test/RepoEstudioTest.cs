@@ -9,16 +9,16 @@ public class RepoEstudioTest : TestBase
 {
     readonly IRepoEstudio repo;
     public RepoEstudioTest() : base() => repo = new RepoEstudio(Conexion);
-    [Fact]
 
-    public void TraerEstudiosOK()
+    [Fact]
+    public void TraerEstudiosOK() //--listo
     {
         var repos = repo.TraerElementos();
         Assert.Contains(repos, est => est.Nombre == "Disney" && est.IdEstudio == 1);
     }
 
-    /*[Fact]
-    public void AltaEstudioOK()
+    [Fact]
+    public void AltaEstudioOK() //--listo
     {
         string nombre = "Pixar";
         DateTime fundacion = new DateTime(1986, 02, 13);
@@ -30,10 +30,10 @@ public class RepoEstudioTest : TestBase
         };
 
         repo.Alta(altaestudiopixar);
-    }*/
+    }
 
     [Fact]
-    public void BorrarEstudioExcep()
+    public void BorrarEstudioExcep() //--listo
     {
         byte idestudio = 3;
 
@@ -41,6 +41,38 @@ public class RepoEstudioTest : TestBase
         <ConstraintException> alamacena la restriccion del try/catch, y se le pasa el metodo que se va a ejecutar
         Por ultimo se asegura que la excepcion contenga el mensaje :)*/
         var excep = Assert.Throws<ConstraintException>(() => repo.Borrar(idestudio));
+        Assert.Contains("No se puede eliminar", excep.Message);
+    }
+
+    //-------------------------------------------Test async------------------------------------
+    [Fact]
+    public async Task TraerEstudiosOKAaync()
+    {
+        var repos = await repo.TraerElementoAsync();
+        Assert.Contains(repos, est => est.Nombre == "Disney" && est.IdEstudio == 1);
+    }
+
+    [Fact]
+    public async Task AltaEstudioOKAsync()
+    {
+        string nombre = "Pixar";
+        DateTime fundacion = new DateTime(1986, 02, 13);
+
+        var altaestudiopixar = new Estudio(0, nombre, fundacion)
+        {
+            Nombre = nombre,
+            Fundacion = fundacion
+        };
+
+        await repo.AltaAsync(altaestudiopixar);
+    }
+    
+    [Fact]
+    public async Task BorrarEstudioExcepAsync()
+    {
+        byte idestudio = 3;
+
+        var excep = await Assert.ThrowsAsync<ConstraintException>(() => repo.BorrarAsync(idestudio));
         Assert.Contains("No se puede eliminar", excep.Message);
     }
 }

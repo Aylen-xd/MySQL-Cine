@@ -1,4 +1,4 @@
--- Active: 1729186022063@@127.0.0.1@3306@5to_Pelicula
+-- Active: 1751981225343@@127.0.0.1@3306@5to_pelicula
 Use 5to_Pelicula;
 
 -- Cuanto dinero ganaron las peliculas (presupuesto - recaudación). Mostrar solo el nombre y dinero ganado de las películas que superen los 100,000,000. Ordenar de mayor a menor

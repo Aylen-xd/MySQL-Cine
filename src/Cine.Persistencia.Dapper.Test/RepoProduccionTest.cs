@@ -1,22 +1,26 @@
+using System.Threading.Tasks;
 using Cine.Core;
 using Cine.Core.Persistencia;
 using Cine.Persistencia.Dapper.Repos;
 
 namespace Cine.Persistencia.Dapper.Test;
+
 public class RepoProduccionTest : TestBase
 {
     readonly IRepoProduccion repo;
-    public RepoProduccionTest() : base () 
-       => repo = new RepoProduccion (Conexion);
-       [Fact]
-    public void TraerProduccionOK()
+    public RepoProduccionTest() : base()
+       => repo = new RepoProduccion(Conexion);
+
+    [Fact]
+    public void TraerProduccionOK() //--lsito
     {
         var repos = repo.TraerElementos();
         Assert.Contains(repos, prod => prod.IdProduccion == 1);
     }
-    
+
     [Fact]
-    public void AltaProduccionOK () {
+    public void AltaProduccionOK() //--listo
+    {
         // star wars el despertar de la fuerza
         byte idestudio = 1;
         string productor = "Kathleen Kennedy";
@@ -27,7 +31,7 @@ public class RepoProduccionTest : TestBase
         string musica = "John Williams";
         decimal presupuesto = 245000000;
 
-        var altaproStarwars7 = new Produccion (0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica) 
+        var altaproStarwars7 = new Produccion(0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica)
         {
             IdEstudio = idestudio,
             Productor = productor,
@@ -36,14 +40,14 @@ public class RepoProduccionTest : TestBase
             Vestuario = vestuario,
             Sonido = sonido,
             Musica = musica
-        };    
+        };
 
-        repo.Alta(altaproStarwars7);    
+        repo.Alta(altaproStarwars7);
     }
 
     [Fact]
-
-    public void AltaProduccion2OK () {
+    public void AltaProduccion2OK() //--listo
+    {
         // star wars the last jedi
         byte idestudio = 1;
         string productor = "Kathleen Kennedy";
@@ -54,7 +58,7 @@ public class RepoProduccionTest : TestBase
         string musica = "John Williams";
         decimal presupuesto = 317000000;
 
-        var altaproStarwars8 = new Produccion (0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica) 
+        var altaproStarwars8 = new Produccion(0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica)
         {
             IdEstudio = idestudio,
             Productor = productor,
@@ -63,13 +67,14 @@ public class RepoProduccionTest : TestBase
             Vestuario = vestuario,
             Sonido = sonido,
             Musica = musica
-        };    
+        };
 
-        repo.Alta(altaproStarwars8);    
-    
+        repo.Alta(altaproStarwars8);
+
     }
 
-    public void ActualizacionProduc()
+    [Fact]
+    public void ActualizacionProduc() //--listo
     {
         byte idestudio = 1;
         string productor = "";
@@ -80,7 +85,7 @@ public class RepoProduccionTest : TestBase
         string musica = "";
         decimal presupuesto = 230000;
 
-        var ActualizacionProduc = new Produccion (0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica) 
+        var ActualizacionProduc = new Produccion(0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica)
         {
             IdEstudio = idestudio,
             Productor = productor,
@@ -89,8 +94,97 @@ public class RepoProduccionTest : TestBase
             Vestuario = vestuario,
             Sonido = sonido,
             Musica = musica
-        };    
+        };
 
-        repo.DirectorActualiza(ActualizacionProduc, 0);    
+        repo.DirectorActualiza(ActualizacionProduc, 0);
     }
+
+    //------------------------ Tests Async -------------------------------------
+    [Fact]
+    public async Task TraerProduccionOKAsync()
+    {
+        var repos = await repo.TraerElementoAsync();
+        Assert.Contains(repos, prod => prod.IdProduccion == 1);
+    }
+
+    [Fact]
+    public async Task AltaProduccionOKAsync() //--listo
+    {
+        // star wars el despertar de la fuerza
+        byte idestudio = 1;
+        string productor = "Kathleen Kennedy";
+        string director = "J.J. Abrams";
+        string guion = "Lawrence Kasdan, J.J. Abrams, Michael Arndt";
+        string vestuario = "Michael Kaplan";
+        string sonido = "David Acord, Matthew Wood";
+        string musica = "John Williams";
+        decimal presupuesto = 245000000;
+
+        var altaproStarwars7 = new Produccion(0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica)
+        {
+            IdEstudio = idestudio,
+            Productor = productor,
+            Director = director,
+            Guion = guion,
+            Vestuario = vestuario,
+            Sonido = sonido,
+            Musica = musica
+        };
+
+        await repo.AltaAsync(altaproStarwars7);
+    }
+
+    [Fact]
+    public async Task AltaProduccion2OKAsync()
+    {
+        // star wars the last jedi
+        byte idestudio = 1;
+        string productor = "Kathleen Kennedy";
+        string director = "J.J. Abrams";
+        string guion = "Lawrence Kasdan, J.J. Abrams, Michael Arndt";
+        string vestuario = "Michael Kaplan";
+        string sonido = "David Acord, Matthew Wood";
+        string musica = "John Williams";
+        decimal presupuesto = 317000000;
+
+        var altaproStarwars8 = new Produccion(0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica)
+        {
+            IdEstudio = idestudio,
+            Productor = productor,
+            Director = director,
+            Guion = guion,
+            Vestuario = vestuario,
+            Sonido = sonido,
+            Musica = musica
+        };
+
+        await repo.AltaAsync(altaproStarwars8);
+    }
+    
+    [Fact]
+    public async Task ActualizacionProducAsync()
+    {
+        byte idestudio = 1;
+        string productor = "";
+        string director = "";
+        string guion = "";
+        string vestuario = "";
+        string sonido = "";
+        string musica = "";
+        decimal presupuesto = 230000;
+
+        var ActualizacionProduc = new Produccion(0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica)
+        {
+            IdEstudio = idestudio,
+            Productor = productor,
+            Director = director,
+            Guion = guion,
+            Vestuario = vestuario,
+            Sonido = sonido,
+            Musica = musica
+        };
+
+        await repo.DirectorActualizaAsync(ActualizacionProduc, 0);
+    }
+
 }
