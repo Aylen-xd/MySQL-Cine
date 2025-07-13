@@ -4,6 +4,8 @@ using Cine.Persistencia.Dapper;
 using Cine.Persistencia.Dapper.Repos;
 using MySqlConnector;
 using Scalar.AspNetCore;
+using Cine.Core;
+using Cine.Core.Persistencia;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,17 +17,21 @@ var connectionString = builder.Configuration.GetConnectionString("MySQL");
 builder.Services.AddScoped<IDbConnection>(sp => new MySqlConnection(connectionString));
 
 //Cada vez que necesite la interfaz, se va a instanciar automaticamente AdoDapper y se va a pasar al metodo de la API
+
 //estos dos no tiene dependencia de nadie
 builder.Services.AddScoped<IRepoGenero, RepoGenero>();
 builder.Services.AddScoped<IRepoActor, RepoActor>();
 
+
+
+/*
 //los que tiene dependencia 
 builder.Services.AddScoped<IRepoTrailer, RepoTrailer>();
 builder.Services.AddScoped<IRepoSaga, RepoSaga>();
 builder.Services.AddScoped<IRepoEstudio, RepoEstudio>();
 builder.Services.AddScoped<IRepoPelicula, RepoPelicula>();
 builder.Services.AddScoped<IRepoProduccion, RepoProduccion>();
-
+*/
 
 
 builder.Services.AddEndpointsApiExplorer();
@@ -51,6 +57,71 @@ app.MapGet("/generos", (IRepoGenero repo) =>
 app.MapGet("/actores", (IRepoActor repo) =>
     repo.TraerElementos());
 
+//----------------------------------------------
+
+app.MapGet("/generos/{id}", (int id,  IRepoGenero repo) =>
+    repo.TraerElementos(id)
+        is Genero xgenero
+            ? Results.Ok(xgenero)
+            : Results.NotFound());
+
+
+app.MapGet("/actores/{id}", (int id,  IRepoActor repo) =>
+    repo.TraerElementos(id)
+        is Actor xactor
+            ? Results.Ok(xactor)
+            : Results.NotFound());
+
+//----------------------------------------------
+
+app.MapPost("/genero", (Genero xgenero, IRepoGenero repo) =>
+{
+    repo.Alta(xgenero);
+
+    return Results.Created($"/genero/{xgenero.IdGenero}", xgenero);
+});
+
+app.MapPost("/actores", (Actor xactor, IRepoActor repo) =>
+{
+    repo.Alta(xactor);
+
+    return Results.Created($"/actores/{xactor.idActor}", xactor);
+});
+
+//----------------------------------------------
+
+//Actuializa todo el genero, pero no usamos put en este caso
+/*app.MapPut("/genero/{id}", async (int id, Genero inputxgenero, IRepoGenero repo) =>
+{
+    var xgenero = repo.ObtenerTodoPorId(id);
+
+    if (xgenero is null) return Results.NotFound();
+
+    xgenero.Nombre = inputxgenero.Nombre;
+    //xgenero.IsComplete = inputTodo.IsComplete;
+
+    repo.ActualizarTodo(xgenero);
+
+    return Results.NoContent();
+});
+*/
+
+/*
+app.MapDelete("/genero/{id}", (int id, IRepoGenero repo) =>
+{
+    if (repo.ObtenerTodoPorId(id) is Genero xgenero)
+    {
+        await repo.EliminarTodo(xgenero);
+        return Results.NoContent();
+    }
+
+    return Results.NotFound();
+});
+*/
+app.Run();
+
+
+/*
 //si tiene dependencia--------------------------------------
 app.MapGet("/trailers", (IRepoTrailer repo) =>
     repo.TraerElementos());
@@ -68,43 +139,5 @@ app.MapGet("/produccion", (IRepoProduccion repo) =>
     repo.TraerElementos());
 
 //-----------------------------------------------------------
+*/
 
-app.MapGet("/todoitems/{id}", async (int id, IADO repo) =>
-    await repo.ObtenerTodoPorIdAsync(id)
-        is Todo todo
-            ? Results.Ok(todo)
-            : Results.NotFound());
-
-app.MapPost("/todoitems", async (Todo todo, IADO repo) =>
-{
-    await repo.AgregarTodoAsync(todo);
-
-    return Results.Created($"/todoitems/{todo.Id}", todo);
-});
-
-app.MapPut("/todoitems/{id}", async (int id, Todo inputTodo, IADO repo) =>
-{
-    var todo = await repo.ObtenerTodoPorIdAsync(id);
-
-    if (todo is null) return Results.NotFound();
-
-    todo.Name = inputTodo.Name;
-    todo.IsComplete = inputTodo.IsComplete;
-
-    await repo.ActualizarTodoAsync(todo);
-
-    return Results.NoContent();
-});
-
-app.MapDelete("/todoitems/{id}", async (int id, IADO repo) =>
-{
-    if (await repo.ObtenerTodoPorIdAsync(id) is Todo todo)
-    {
-        await repo.EliminarTodoAsync(todo);
-        return Results.NoContent();
-    }
-
-    return Results.NotFound();
-});
-
-app.Run();
