@@ -59,15 +59,15 @@ app.MapGet("/actores", (IRepoActor repo) =>
 
 //----------------------------------------------
 
-app.MapGet("/generos/{id}", (int id,  IRepoGenero repo) =>
-    repo.TraerElementos(id)
+app.MapGet("/generos/{id}", (byte id,  IRepoGenero repo) =>
+    repo.TraerElementos() //el metodo no acepta parametros
         is Genero xgenero
             ? Results.Ok(xgenero)
             : Results.NotFound());
 
 
-app.MapGet("/actores/{id}", (int id,  IRepoActor repo) =>
-    repo.TraerElementos(id)
+app.MapGet("/actores/{id}", (byte id,  IRepoActor repo) =>
+    repo.TraerElementos()
         is Actor xactor
             ? Results.Ok(xactor)
             : Results.NotFound());
@@ -106,7 +106,7 @@ app.MapPost("/actores", (Actor xactor, IRepoActor repo) =>
 });
 */
 
-/*
+/* 
 app.MapDelete("/genero/{id}", (int id, IRepoGenero repo) =>
 {
     if (repo.ObtenerTodoPorId(id) is Genero xgenero)
