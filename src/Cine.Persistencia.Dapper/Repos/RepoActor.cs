@@ -26,14 +26,14 @@ public class RepoActor : RepoBase, IRepoActor
     public IEnumerable<Actor> TraerElementos()
     {
         //Hacer la query de select actores.
-        var query = @"SELECT * FROM Actor";
+        var query = @"SELECT idAtor, Nombre, Apellido, fecha_nacimiento 'fnacimiento', sexo, nacionalidad, rol  FROM Actor";
         var Actor = Conexion.Query<Actor>(query);
         return Actor;
     }
 
     public Actor? Detalle(byte id)
     {
-        var query = @"SELECT * FROM Actor where idActor = @idActor";
+        var query = @"SELECT idAtor, Nombre, Apellido, fecha_nacimiento 'fnacimiento', sexo, nacionalidad, rol FROM Actor where idActor = @idActor";
         var actorID = Conexion.QuerySingleOrDefault<Actor>(query, new { idActor = id });
         return actorID;
         //IRepoDetalle<Genero, byte>
