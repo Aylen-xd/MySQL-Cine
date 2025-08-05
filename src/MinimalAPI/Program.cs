@@ -58,14 +58,14 @@ app.MapGet("/actores", (IRepoActor repo) =>
 //----------------------------------------------
 
 app.MapGet("/generos/{id}", (byte id,  IRepoGenero repo) =>
-    repo.TraerElementos() //el metodo no acepta parametros
+    repo.Detalle(id) //el metodo no acepta parametros
         is Genero xgenero
             ? Results.Ok(xgenero)
             : Results.NotFound());
 
 
 app.MapGet("/actores/{id}", (byte id,  IRepoActor repo) =>
-    repo.TraerElementos()
+    repo.Detalle(id)
         is Actor xactor
             ? Results.Ok(xactor)
             : Results.NotFound());

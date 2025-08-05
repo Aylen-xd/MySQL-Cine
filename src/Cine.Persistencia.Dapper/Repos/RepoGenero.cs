@@ -17,14 +17,17 @@ public class RepoGenero : RepoBase, IRepoGenero
         genero.IdGenero = parametros.Get<byte>("unidGenero");
     }
 
-    public Genero? Detalle(byte indiceSimple)
+    public Genero? Detalle(byte id)
     {
-        throw new NotImplementedException();
+        var query = @"SELECT * FROM Genero where idGenero = @idGenero";
+        var generosID = Conexion.QuerySingleOrDefault<Genero>(query, new { idGenero = id });
+        return generosID;
+        //IRepoDetalle<Genero, byte>
     }
 
     public IEnumerable<Genero> TraerElementos()
     {
-        var query = @"SELECT * FROM Genero";
+        var query = @"SELECT idGenero, genero 'nombre' FROM Genero";
         var generos = Conexion.Query<Genero>(query);
         return generos;
     }

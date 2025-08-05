@@ -2,10 +2,10 @@
 
 public class Genero
 {
-    public Genero(byte idGenero = 0, string genero = "")
+    public Genero(byte idGenero = 0, string nombre = "")
     {
         IdGenero = idGenero;
-        Nombre = genero;
+        Nombre = nombre;
     }
 
     public byte IdGenero { get ; set ; }
