@@ -19,7 +19,7 @@ public class RepoGenero : RepoBase, IRepoGenero
 
     public Genero? Detalle(byte id)
     {
-        var query = @"SELECT * FROM Genero where idGenero = @idGenero";
+        var query = @"SELECT idGenero, genero 'nombre' FROM Genero where idGenero = @idGenero";
         var generosID = Conexion.QuerySingleOrDefault<Genero>(query, new { idGenero = id });
         return generosID;
         //IRepoDetalle<Genero, byte>
