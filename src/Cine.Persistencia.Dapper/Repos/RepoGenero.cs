@@ -17,6 +17,11 @@ public class RepoGenero : RepoBase, IRepoGenero
         genero.IdGenero = parametros.Get<byte>("unidGenero");
     }
 
+    public Genero? Detalle(byte indiceSimple)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<Genero> TraerElementos()
     {
         var query = @"SELECT * FROM Genero";

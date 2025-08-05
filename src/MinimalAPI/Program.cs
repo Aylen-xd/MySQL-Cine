@@ -1,11 +1,9 @@
 using System.Data;
 using Cine.Core.Persistencia;
-using Cine.Persistencia.Dapper;
 using Cine.Persistencia.Dapper.Repos;
 using MySqlConnector;
 using Scalar.AspNetCore;
 using Cine.Core;
-using Cine.Core.Persistencia;
 
 var builder = WebApplication.CreateBuilder(args);
 

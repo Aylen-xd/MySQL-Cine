@@ -23,6 +23,11 @@ public class RepoActor:RepoBase, IRepoActor
         elemento.idActor = parametros.Get<byte>("xidActor");
     }
 
+    public Actor? Detalle(byte indiceSimple)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<Actor> TraerElementos()
     {
         //Hacer la query de select actores.

@@ -42,7 +42,6 @@ public class RepoProduccionTest : TestBase
     }
 
     [Fact]
-
     public void AltaProduccion2OK () {
         // star wars the last jedi
         byte idestudio = 1;
@@ -69,6 +68,7 @@ public class RepoProduccionTest : TestBase
     
     }
 
+    [Fact]
     public void ActualizacionProduc()
     {
         byte idestudio = 1;
@@ -80,7 +80,7 @@ public class RepoProduccionTest : TestBase
         string musica = "";
         decimal presupuesto = 230000;
 
-        var ActualizacionProduc = new Produccion (0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica) 
+        var ActualizacionProduc = new Produccion(0, idestudio, productor, director, guion, vestuario, sonido, presupuesto, musica)
         {
             IdEstudio = idestudio,
             Productor = productor,
@@ -89,8 +89,8 @@ public class RepoProduccionTest : TestBase
             Vestuario = vestuario,
             Sonido = sonido,
             Musica = musica
-        };    
+        };
 
-        repo.DirectorActualiza(ActualizacionProduc, 0);    
+        repo.DirectorActualiza(ActualizacionProduc, 0);
     }
 }
